@@ -12,8 +12,11 @@ async function getBundle() {
     const styles = [];
     // перебор каждого файла
     for (const file of files) {
+      const filePath = path.join(file.path, `${file.name}`);
+      // получает расширение файла
+      const fileExtension = path.extname(filePath);
       // если это файл с расширением .css
-      if (file.isFile() && file.name.includes('.css')) {
+      if (file.isFile() && fileExtension === '.css') {
         // считывает данные из файла
         const data = await fs.readFile(
           path.join(__dirname, 'styles', file.name),
