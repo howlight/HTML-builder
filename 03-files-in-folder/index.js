@@ -16,17 +16,21 @@ fs.readdir(folderPath, { withFileTypes: true }, (err, files) => {
       // если элемент это файл
       if (file.isFile()) {
         // получение информации о файле
-        const fileName = file.name.replace(/\..+$/, '');
-        const fileExtension = path.extname(file.name).slice(1);
         const filePath = path.join(file.path, `${file.name}`);
-
+        const fileExtension = path.extname(filePath);
+        const fileName = path.basename(filePath);
         fs.stat(filePath, (err, stats) => {
           if (err) {
             console.log(err);
           }
           const fileSize = stats.size;
           // вывод всей информации в консоль
-          console.log(`${fileName} - ${fileExtension} - ${fileSize}b`);
+          console.log(
+            `${fileName.replace(fileExtension, '')} - ${fileExtension.replace(
+              '.',
+              '',
+            )} - ${fileSize}b`,
+          );
         });
       }
     });
