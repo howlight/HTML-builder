@@ -82,12 +82,37 @@ async function getBundle() {
   }
 }
 
+async function clearDir(dir) {
+  try {
+    // получает массив файлов и папок {Dirent} в папке dir
+    const files = await fs.readdir(dir, { withFileTypes: true });
+    // перебирает массив файлов и папок
+    for (const file of files) {
+      // полный путь к папке или файлу
+      // 06-build-page/project-dist/assets/folder-name или file-name
+      const filePath = path.join(dir, file.name);
+      // если папка
+      if (file.isDirectory()) {
+        // рекурсивный вызов с новым путем к папке
+        await clearDir(filePath);
+      } else {
+        // удаляем файл
+        await fs.unlink(filePath);
+      }
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 async function copyDir(src, dest) {
   try {
     // создает новую директорию 06-build-page/project-dist/assets
     // { recursive: true } - создает все промежуточные папки, если они отсутствуют
     await fs.mkdir(dest, { recursive: true });
-    // получает массив файлов и папок в папке 06-build-page/assets
+    // очищает папку dest(06-build-page/project-dist/assets) от файлов и файлов в подпапках
+    await clearDir(dest);
+    // получает массив файлов и папок {Dirent} в папке 06-build-page/assets
     // { withFileTypes: true } - возвращает объекты fs.Dirent (файлы и папки)
     const files = await fs.readdir(src, { withFileTypes: true });
     // перебирает массив файлов и папок
